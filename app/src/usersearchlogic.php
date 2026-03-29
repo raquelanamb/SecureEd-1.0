@@ -92,23 +92,31 @@ try {
     global $jsonArray;
 
     while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
-        $jsonArray[] = $row;
+        // HW2 TASK 1 pt1:
+        // XSS MITIGATION: sanitize all string fields before returning them to the client.
+        // htmlspecialchars() converts special HTML characters (e.g. <, >, ", &) into their
+        // HTML entity equivalents, preventing injected scripts or markup from being
+        // interpreted by the browser.
+        $sanitizedRow = array();
+        foreach ($row as $key => $value) {
+            if (is_string($value)) {
+                $sanitizedRow[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            } else {
+                $sanitizedRow[$key] = $value;
+            }
+        }
+        $jsonArray[] = $sanitizedRow;
     }
 
     echo json_encode($jsonArray);
 }
 catch(Exception $e)
 {
-    //prepare page for content
-    include_once "ErrorHeader.php";
-
-    //Display error information
-    echo 'Caught exception: ',  $e->getMessage(), "<br>";
-    var_dump($e->getTraceAsString());
-    echo 'in '.'http://'. $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']."<br>";
-
-    $allVars = get_defined_vars();
-    debug_zval_dump($allVars);
+    // HW2 Task 1 pt2: 
+    // returning a generic error message instead of exposing
+    // internal exception details, stack traces, or variable dumps to the client.
+    http_response_code(500);
+    echo json_encode(array("error" => "An error occurred. Please try again."));
 }
 
 

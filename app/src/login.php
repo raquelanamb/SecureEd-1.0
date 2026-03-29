@@ -3,7 +3,7 @@ try {
     /*Get DB connection*/
     require_once "../src/DBController.php";
 
-    # TASK 1: Applying input validation
+    # HW1 TASK 1: Applying input validation
     /*Get information from the post request*/
     $myusername = $_POST['username'] ?? ''; # default to empty string if not provided
     $mypassword = $_POST['password'] ?? ''; # default to empty string if not provided
@@ -32,7 +32,7 @@ try {
     global $acctype;
 
 
-    # TASK 2: Mitigate the SQLi vulnerability
+    # HW1 TASK 2: Mitigate the SQLi vulnerability
 
     //query for count
     $stmt = $db->prepare("SELECT COUNT(*) as count FROM User WHERE Email=:email AND (Password=:pass OR Password=:hash)");
